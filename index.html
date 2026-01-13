@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICO Composer</title>
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23007AFF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 2 7 12 12 22 7 12 2'%3E%3C/polygon%3E%3Cpolyline points='2 17 12 22 22 17'%3E%3C/polyline%3E%3Cpolyline points='2 12 12 17 22 12'%3E%3C/polyline%3E%3C/svg%3E">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="sidebar-header-row">
+            <div class="header-text">
+                <h1>ICO Composer</h1>
+                <p>Compose Windows .ico files.</p>
+            </div>
+            <div class="header-actions">
+                <button class="icon-btn" onclick="openHelp()" aria-label="Design Guide" title="Design Guide">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                </button>
+                <button class="icon-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle Theme"
+                    title="Toggle Theme"></button>
+                <div class="divider-vertical"></div>
+                <button class="icon-btn destructive" onclick="clearAll()" aria-label="Clear All" title="Clear All">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab-indicator" id="tabIndicator"></div>
+            <button class="tab-btn active" onclick="switchTab(0)">Universal</button>
+            <button class="tab-btn" onclick="switchTab(1)">Dual</button>
+            <button class="tab-btn" onclick="switchTab(2)">Manual</button>
+        </div>
+
+        <div class="view-wrapper">
+            <!-- VIEW 0: Single Source -->
+            <div id="view-single" class="view-section active">
+                <div class="upload-box" id="box-single">
+                    <input type="file" onchange="handleSingleUpload(this)" accept="image/png, image/jpeg">
+                    <div class="thumb-preview"></div>
+                    <div class="box-content">
+                        <span class="label">Master Image</span>
+                        <span class="sub-label">Auto-scales to all sizes</span>
+                    </div>
+                    <button class="ai-trigger-btn" onclick="openAIModal(event)" title="Generate with AI">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z"></path>
+                        </svg>
+                    </button>
+                </div>
+                <p style="margin-top:20px; font-size:12px; color:var(--text-secondary); line-height:1.5;">
+                    Drag & drop an image, or click the sparkle icon to generate one with AI.
+                </p>
+            </div>
+
+            <!-- VIEW 1: Dual Source -->
+            <div id="view-dual" class="view-section">
+                <div class="grid-2">
+                    <div class="upload-box" id="box-dual-small">
+                        <input type="file" onchange="handleDualUpload(this, 'small')" accept="image/png, image/jpeg">
+                        <div class="thumb-preview"></div>
+                        <div class="box-content">
+                            <span class="label">Small Sizes</span>
+                            <span class="sub-label">For 16px & 32px</span>
+                        </div>
+                    </div>
+                    <div class="upload-box" id="box-dual-large">
+                        <input type="file" onchange="handleDualUpload(this, 'large')" accept="image/png, image/jpeg">
+                        <div class="thumb-preview"></div>
+                        <div class="box-content">
+                            <span class="label">Large Sizes</span>
+                            <span class="sub-label">For 48px — 256px</span>
+                        </div>
+                    </div>
+                </div>
+                <p style="margin-top:20px; font-size:12px; color:var(--text-secondary); line-height:1.5;">
+                    Use simplified shapes for small sizes and detailed artwork for large sizes.
+                </p>
+            </div>
+
+            <!-- VIEW 2: Manual Scale -->
+            <div id="view-manual" class="view-section">
+                <div class="grid-6">
+                    <!-- 16 -->
+                    <div class="upload-box" id="box-manual-16">
+                        <input type="file" onchange="handleManualUpload(this, 16)" accept="image/png, image/jpeg">
+                        <div class="thumb-preview"></div>
+                        <div class="box-content">
+                            <span class="label">16px</span>
+                            <span class="sub-label">Taskbar & Lists</span>
+                        </div>
+                    </div>
+                    <!-- 32 -->
+                    <div class="upload-box" id="box-manual-32">
+                        <input type="file" onchange="handleManualUpload(this, 32)" accept="image/png, image/jpeg">
+                        <div class="thumb-preview"></div>
+                        <div class="box-content">
+                            <span class="label">32px</span>
+                            <span class="sub-label">Desktop & Start</span>
+                        </div>
+                    </div>
+                    <!-- 48 -->
+                    <div class="upload-box" id="box-manual-48">
+                        <input type="file" onchange="handleManualUpload(this, 48)" accept="image/png, image/jpeg">
+                        <div class="thumb-preview"></div>
+                        <div class="box-content">
+                            <span class="label">48px</span>
+                            <span class="sub-label">Medium Icons</span>
+                        </div>
+                    </div>
+                    <!-- 64 -->
+                    <div class="upload-box" id="box-manual-64">
+                        <input type="file" onchange="handleManualUpload(this, 64)" accept="image/png, image/jpeg">
+                        <div class="thumb-preview"></div>
+                        <div class="box-content">
+                            <span class="label">64px</span>
+                            <span class="sub-label">High DPI</span>
+                        </div>
+                    </div>
+                    <!-- 128 -->
+                    <div class="upload-box" id="box-manual-128">
+                        <input type="file" onchange="handleManualUpload(this, 128)" accept="image/png, image/jpeg">
+                        <div class="thumb-preview"></div>
+                        <div class="box-content">
+                            <span class="label">128px</span>
+                            <span class="sub-label">Large Icons</span>
+                        </div>
+                    </div>
+                    <!-- 256 -->
+                    <div class="upload-box" id="box-manual-256">
+                        <input type="file" onchange="handleManualUpload(this, 256)" accept="image/png, image/jpeg">
+                        <div class="thumb-preview"></div>
+                        <div class="box-content">
+                            <span class="label">256px</span>
+                            <span class="sub-label">Extra Large</span>
+                        </div>
+                    </div>
+                </div>
+                <p style="margin-top:20px; font-size:12px; color:var(--text-secondary); line-height:1.5;">
+                    Pixel-perfect control. Upload specific images for each target size.
+                </p>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <button id="generateBtn" class="action-btn" onclick="generateICO()">Download .ICO</button>
+        </div>
+    </div>
+
+    <!-- LIVE PREVIEW AREA -->
+    <div class="preview-area">
+        <div class="preview-header">
+            <h2>Live Preview</h2>
+            <span>Real-time Output</span>
+        </div>
+
+        <div class="preview-grid">
+            <div class="preview-card">
+                <div class="icon-container"><img id="preview-256" width="128" src="" style="display:none">
+                    <div class="empty-placeholder" id="empty-256"></div>
+                </div>
+                <div class="size-label">256 x 256</div>
+            </div>
+            <div class="preview-card">
+                <div class="icon-container"><img id="preview-128" width="100" src="" style="display:none">
+                    <div class="empty-placeholder" id="empty-128"></div>
+                </div>
+                <div class="size-label">128 x 128</div>
+            </div>
+            <div class="preview-card">
+                <div class="icon-container"><img id="preview-64" width="64" src="" style="display:none">
+                    <div class="empty-placeholder" id="empty-64"></div>
+                </div>
+                <div class="size-label">64 x 64</div>
+            </div>
+            <div class="preview-card">
+                <div class="icon-container"><img id="preview-48" width="48" src="" style="display:none">
+                    <div class="empty-placeholder" id="empty-48"></div>
+                </div>
+                <div class="size-label">48 x 48</div>
+            </div>
+            <div class="preview-card">
+                <div class="icon-container"><img id="preview-32" width="32" src="" style="display:none">
+                    <div class="empty-placeholder" id="empty-32"></div>
+                </div>
+                <div class="size-label">32 x 32</div>
+            </div>
+            <div class="preview-card">
+                <div class="icon-container"><img id="preview-16" width="16" src="" style="display:none">
+                    <div class="empty-placeholder" id="empty-16"></div>
+                </div>
+                <div class="size-label">16 x 16</div>
+            </div>
+        </div>
+        <div class="preview-footer">
+            <p>Jared Andre Carreon &copy; <span id="year"></span>. All Rights Reserved.</p>
+            <p class="footer-brand">ICO Composer</p>
+        </div>
+    </div>
+
+    <!-- HELP MODAL -->
+    <div id="helpModal" class="modal-overlay" onclick="closeHelp(event)">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Icon Design Guide</h3>
+                <button class="close-modal-btn" onclick="closeHelp(event)">×</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-intro">Creating a great Windows icon requires attention to detail across multiple sizes.
+                    Here is what to look out for:</p>
+
+                <div class="guide-grid">
+                    <!-- 1. Square -->
+                    <div class="guide-item">
+                        <div class="guide-visual"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+                                <path d="M8 3v18M16 3v18M3 8h18M3 16h18" stroke-opacity="0.2"></path>
+                            </svg></div>
+                        <h4>Square Canvas</h4>
+                        <p>Use a 1:1 aspect ratio (e.g. 1024x1024).</p>
+                    </div>
+                    <!-- 2. Transparency -->
+                    <div class="guide-item">
+                        <div class="guide-visual"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M12 2a10 10 0 0 1 10 10" stroke-dasharray="2 2"></path>
+                                <path d="M2 12a10 10 0 0 1 10-10" stroke-opacity="0.5"></path>
+                            </svg></div>
+                        <h4>Transparency</h4>
+                        <p>Keep the background transparent.</p>
+                    </div>
+                    <!-- 3. Silhouette -->
+                    <div class="guide-item">
+                        <div class="guide-visual"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                                <path
+                                    d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z">
+                                </path>
+                            </svg></div>
+                        <h4>Silhouette</h4>
+                        <p>Use strong shapes that work at small sizes.</p>
+                    </div>
+                    <!-- 4. Contrast -->
+                    <div class="guide-item">
+                        <div class="guide-visual"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M12 22c5.52 0 10-4.48 10-10S17.52 2 12 2" fill="currentColor" stroke="none">
+                                </path>
+                                <line x1="12" y1="2" x2="12" y2="22"></line>
+                            </svg></div>
+                        <h4>Contrast</h4>
+                        <p>High contrast ensures visibility on all backgrounds.</p>
+                    </div>
+                    <!-- 5. Safe Area -->
+                    <div class="guide-item">
+                        <div class="guide-visual"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="4"></rect>
+                                <rect x="7" y="7" width="10" height="10" rx="2" stroke-dasharray="2 2"></rect>
+                            </svg></div>
+                        <h4>Safe Area</h4>
+                        <p>Leave a 10% margin around the edges.</p>
+                    </div>
+                    <!-- 6. Typography -->
+                    <div class="guide-item">
+                        <div class="guide-visual"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 7V4h16v3"></path>
+                                <path d="M9 20h6"></path>
+                                <path d="M12 4v16"></path>
+                            </svg></div>
+                        <h4>Avoid Text</h4>
+                        <p>Text is unreadable at 16px. Use logos instead.</p>
+                    </div>
+                </div>
+
+                <button class="action-btn" onclick="closeHelp(event)" style="margin-top: 20px;">Got it</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI GENERATION MODAL -->
+    <div id="aiModal" class="modal-overlay" onclick="closeAIModal(event)">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Generate Icon</h3>
+                <button class="close-modal-btn" onclick="closeAIModal(event)">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="ai-config-row">
+                    <div class="input-group" style="flex: 1;">
+                        <label for="aiProvider">Model</label>
+                        <select id="aiProvider" class="text-input select" onchange="updateAIPlaceholder()">
+                            <option value="openai">OpenAI (DALL-E 3)</option>
+                            <option value="gemini">Gemini (Imagen)</option>
+                            <option value="stability">Stability AI (SDXL)</option>
+                        </select>
+                    </div>
+                    <div class="input-group" style="flex: 2;">
+                        <label for="apiKey">API Key</label>
+                        <input type="password" id="apiKey" name="search_api_key" autocomplete="new-password"
+                            placeholder="sk-..." class="text-input" spellcheck="false" data-lpignore="true"
+                            data-1p-ignore>
+                    </div>
+                </div>
+
+                <div class="privacy-note">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    <span>Your API key is stored securely on your device and is never sent to our servers.</span>
+                </div>
+
+                <div class="input-group">
+                    <label for="aiPrompt">Prompt</label>
+                    <textarea id="aiPrompt" name="search_prompt" autocomplete="off" placeholder="Describe your icon..."
+                        class="text-input area" spellcheck="false" data-lpignore="true" data-1p-ignore></textarea>
+                </div>
+
+                <div class="checkbox-row">
+                    <input type="checkbox" id="usePrePrompt" checked>
+                    <label for="usePrePrompt">Apply Windows style formatting (Fluent Design)</label>
+                </div>
+
+                <button id="aiGenerateBtn" class="action-btn mt-large" onclick="generateAIIcon()">Generate</button>
+
+                <div id="aiResult" class="ai-result" style="display:none;">
+                    <img id="aiImage" src="" alt="Generated Icon">
+                    <button class="action-btn secondary" onclick="useGeneratedImage()">Use Image</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
