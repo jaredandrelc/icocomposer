@@ -7,7 +7,7 @@ A lightweight, client-side tool for generating Windows Icon (`.ico`) files direc
 Unlike most *ad-littered* web converters that rely on server-side processing, IcoComposer constructs binary files entirely in JavaScript. It manually writes the ICO file header and directory structure byte-by-byte.
 
 ![App Screenshot](media/image.png)
-s
+
 ## ⚡ Key Features
 
 * **Client-Side Binary Generation:** Uses `DataView` and `Uint8Array` to construct valid `.ico` binaries according to the official file specification.
